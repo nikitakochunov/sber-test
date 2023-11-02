@@ -10,11 +10,11 @@ const EVENT_TYPE = 'resize';
 export const useScreenWidth = () => {
     const [width, setWidth] = useState(getWidth());
 
-    const resizeListener = () => {
-        setWidth(getWidth());
-    };
-
     useEffect(() => {
+        const resizeListener = () => {
+            setWidth(getWidth());
+        };
+        
         window.addEventListener(EVENT_TYPE, resizeListener);
 
         return () => {
