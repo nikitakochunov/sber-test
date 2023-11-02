@@ -1,6 +1,6 @@
 import { css } from '@emotion/css';
 
-import type { StackProps } from './types';
+import type { TStackProps } from './types';
 
 export const Stack = ({
     children,
@@ -10,9 +10,8 @@ export const Stack = ({
     justifyContent = 'flex-start',
     gap = 0,
     className
-}: StackProps) => (
+}: TStackProps) => (
     <div
-        style={{ alignItems: '' }}
         className={css`
             display: flex;
             flex-direction: ${direction};

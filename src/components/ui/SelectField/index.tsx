@@ -1,22 +1,20 @@
 import { useState } from 'react';
-import { css } from '@emotion/css';
-
-import { SELECT_ZINDEX } from 'src/constants';
 
 import { ChevronDown } from 'src/icons/ChevronDown';
 
-import { Options } from './Options';
-import type { OptionType, SelectFieldProps } from './types';
-import {
-    SELECT_BORDER,
-    SELECT_FONT_SIZE,
-    SELECT_HEIGHT,
-    SELECT_PADDING_RIGHT,
-    SELECT_PADDING_TOP,
-    SELECT_WIDTH
-} from './constants';
+import { Stack } from 'src/components/ui/Stack';
 
-export const SelectField = ({ options, defaultOption, name, value, onChange }: SelectFieldProps) => {
+import { Options } from './Options';
+import type { TOption, SelectFieldProps } from './types';
+import { baseStyles, getWrapperStyles, inputStyles } from './styles';
+
+export const SelectField = ({
+    options,
+    defaultOption,
+    name,
+    value,
+    onChange
+}: SelectFieldProps) => {
     const doOptionsExist = options.length > 0;
 
     const [selected, setSelected] = useState(value || '');
@@ -36,51 +34,40 @@ export const SelectField = ({ options, defaultOption, name, value, onChange }: S
         }
     };
 
-    const handleOptionClick = ({ value: optionValue, label }: OptionType) => {
+    const handleOptionClick = ({ value: optionValue, label }: TOption) => {
         if (optionValue === selectedOption?.value) return;
 
         setSelected(optionValue);
         setTextValue(label);
-        onChange({ name, value: optionValue });
+        onChange({ label, value: optionValue });
         toggleOpen();
     };
 
     return (
-        <div
-            className={css`
-                z-index: ${SELECT_ZINDEX};
-                min-width: ${SELECT_WIDTH};
-                min-height: ${SELECT_HEIGHT};
-            `}
-        >
-            <div
-                onClick={toggleOpen}
-                className={css`
-                    cursor: pointer;
-
-                    border-radius: 10px;
-                    padding: ${SELECT_PADDING_TOP} ${SELECT_PADDING_RIGHT};
-                    border: ${SELECT_BORDER};
-                    transition: all 0.3s;
-                    ${!isOpen && 'box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);'}
-                `}
-            >
-                <input
-                    readOnly={true}
-                    id={name}
-                    name={name}
-                    value={textValue}
-                    placeholder={defaultOption}
-                    className={css`
-                        cursor: pointer;
-                        outline: none;
-                        font-size: ${SELECT_FONT_SIZE};
-                    `}
-                />
-                {doOptionsExist && <ChevronDown />}
+        <div className={baseStyles}>
+            <div onClick={toggleOpen} className={getWrapperStyles(isOpen)}>
+                <Stack
+                    alignItems="center"
+                    justifyContent="space-between"
+                    wrap="no-wrap"
+                >
+                    <input
+                        readOnly={true}
+                        id={name}
+                        name={name}
+                        value={textValue}
+                        placeholder={defaultOption}
+                        className={inputStyles}
+                    />
+                    {doOptionsExist && <ChevronDown />}
+                </Stack>
             </div>
             {isOpen && doOptionsExist && (
-                <Options options={options} selectedOption={selected} onClick={handleOptionClick} />
+                <Options
+                    options={options}
+                    selectedOption={selected}
+                    onClick={handleOptionClick}
+                />
             )}
         </div>
     );

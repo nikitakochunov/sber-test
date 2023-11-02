@@ -1,31 +1,43 @@
 /* eslint-disable import/no-default-export */
-import { createAsyncThunk, createSlice, type PayloadAction, type AnyAction } from '@reduxjs/toolkit';
+import {
+    createAsyncThunk,
+    createSlice,
+    type PayloadAction,
+    type AnyAction
+} from '@reduxjs/toolkit';
 
-import { LOADING_STATUS, REJECTED_STATUS, RESOLVED_STATUS } from 'src/store/constants';
+import {
+    LOADING_STATUS,
+    REJECTED_STATUS,
+    RESOLVED_STATUS
+} from 'src/store/constants';
 
-import type { CurrencyDataResponse } from './types';
+import type { TCurrencyDataResponse } from './types';
 import { CURRENCIES_URL, initialState } from './constants';
 
-export const fetchCurrenciesList = createAsyncThunk<CurrencyDataResponse, undefined, { rejectValue: string }>(
-    'currencies/fetchCurrenciesList',
-    async (_, { rejectWithValue }) => {
-        const response = await fetch(CURRENCIES_URL);
+export const fetchCurrenciesList = createAsyncThunk<
+    TCurrencyDataResponse,
+    undefined,
+    { rejectValue: string }
+>('currencies/fetchCurrenciesList', async (_, { rejectWithValue }) => {
+    const response = await fetch(CURRENCIES_URL);
 
-        if (!response.ok) {
-            rejectWithValue('Error!');
-        }
-
-        const data = await response.json();
-        return data;
+    if (!response.ok) {
+        rejectWithValue('Error!');
     }
-);
+
+    const data = await response.json();
+    return data;
+});
 
 const currencySlice = createSlice({
     name: 'currencies',
     initialState,
     reducers: {
         setCurrentValue(state, action: PayloadAction<{ id: string }>) {
-            const currentValue = state.entities.find((ent) => ent.id === action.payload.id);
+            const currentValue = state.entities.find(
+                (ent) => ent.id === action.payload.id
+            );
             if (currentValue) {
                 state.currentValue = currentValue;
             }
@@ -37,11 +49,14 @@ const currencySlice = createSlice({
                 state.status = LOADING_STATUS;
                 state.error = null;
             })
-            .addCase(fetchCurrenciesList.fulfilled, (state, action: PayloadAction<CurrencyDataResponse>) => {
-                state.status = RESOLVED_STATUS;
-                state.error = null;
-                state.entities = action.payload.data;
-            })
+            .addCase(
+                fetchCurrenciesList.fulfilled,
+                (state, action: PayloadAction<TCurrencyDataResponse>) => {
+                    state.status = RESOLVED_STATUS;
+                    state.error = null;
+                    state.entities = action.payload.data;
+                }
+            )
             .addMatcher(isError, (state, action: PayloadAction<string>) => {
                 state.error = action.payload;
                 state.status = REJECTED_STATUS;

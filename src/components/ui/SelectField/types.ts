@@ -1,12 +1,14 @@
-export type OptionType = {
+export type TOption = {
     value: string;
     label: string;
 };
 
+export type TOnChange = (target: TOption) => void;
+
 export type SelectFieldProps = {
-    options: OptionType[];
+    options: TOption[];
     name: string;
     value: string;
     defaultOption?: string;
-    onChange: (target: { name: string; value: string }) => void;
+    onChange: TOnChange;
 };

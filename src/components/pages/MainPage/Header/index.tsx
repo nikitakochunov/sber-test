@@ -1,39 +1,49 @@
 import { useMemo } from 'react';
 
-import { css } from '@emotion/css';
-
 import { useAppDispatch, useAppSelector } from 'src/store/hooks';
 import { setCurrentValue } from 'src/store/currencies/slice';
 import { LOADING_STATUS } from 'src/store/constants';
+import { getCurrencies } from 'src/store/currencies/selectors';
 
 import { Stack } from 'src/components/ui/Stack';
 import { SelectField } from 'src/components/ui/SelectField';
+import type { TOnChange } from 'src/components/ui/SelectField/types';
+
+import { Contaner } from 'src/shared/Container/';
+import { Logo } from 'src/shared/Logo';
 
 import kitten from 'src/images/Kitten.png';
 
-import { Contaner } from 'src/shared/Container';
+import { transformOptions } from 'src/utils/transformOptions';
 
 import { useScreenWidth } from 'src/hooks/useScreenWidth';
 
-import { Logo } from './Logo';
-
-const MEDIA_WIDTH = 500;
+import { imgStyles, stackStyles } from './styles';
+import {
+    ERROR_MESSAGE,
+    MEDIA_WIDTH,
+    SELECT_FIELD_LOADING_TEXT,
+    SELECT_FIELD_TEXT
+} from './constants';
 
 export const MainPageHeader = () => {
     const width = useScreenWidth();
 
     const dispatch = useAppDispatch();
-    const { entities: options, error, status } = useAppSelector((state) => state.currencies);
+    const { entities: options, error, status } = useAppSelector(getCurrencies);
+
+    const selectFieldDefaultOption =
+        status === LOADING_STATUS
+            ? SELECT_FIELD_LOADING_TEXT
+            : SELECT_FIELD_TEXT;
 
     const transformedOptions = useMemo(
-        () => (options !== null ? options.map((option) => ({ value: option.id, label: option.id })) : []),
+        () => transformOptions(options, 'id', 'id'),
         [options]
     );
 
-    const handleChange = (target: { name: string; value: string }): void => {
-        if (target.name === 'currency') {
-            dispatch(setCurrentValue({ id: target.value }));
-        }
+    const handleSelectChange: TOnChange = (target) => {
+        dispatch(setCurrentValue({ id: target.value }));
     };
 
     return (
@@ -42,13 +52,7 @@ export const MainPageHeader = () => {
                 <Stack
                     justifyContent="space-between"
                     alignItems="flex-start"
-                    className={css`
-                        padding-top: 28px;
-
-                        @media (max-width: ${MEDIA_WIDTH}px) {
-                            justify-content: center;
-                        }
-                    `}
+                    className={stackStyles}
                 >
                     <Stack direction="column" gap={10}>
                         <Logo />
@@ -57,22 +61,15 @@ export const MainPageHeader = () => {
                                 options={transformedOptions}
                                 name="currency"
                                 value=""
-                                defaultOption={status === LOADING_STATUS ? 'Загрузка валют...' : 'Выберите валюту'}
-                                onChange={handleChange}
+                                defaultOption={selectFieldDefaultOption}
+                                onChange={handleSelectChange}
                             />
                         ) : (
-                            <p>Произошла ошибка при загрузке валют</p>
+                            <p>{ERROR_MESSAGE}</p>
                         )}
                     </Stack>
                     {width > MEDIA_WIDTH && (
-                        <img
-                            alt="Kitten"
-                            src={kitten}
-                            className={css`
-                                position: relative;
-                                top: -28px;
-                            `}
-                        />
+                        <img alt="Kitten" src={kitten} className={imgStyles} />
                     )}
                 </Stack>
             </Contaner>

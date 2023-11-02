@@ -1,6 +1,6 @@
-import type { CurrencyState } from './types';
+import type { TCurrencyState } from './types';
 
-export const initialState: CurrencyState = {
+export const initialState: TCurrencyState = {
     entities: [],
     currentValue: null,
     status: null,

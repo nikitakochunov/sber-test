@@ -1,17 +1,19 @@
 import type { PropsWithChildren } from 'react';
 
-type AligmentBasicType = 'flex-start' | 'flex-end' | 'center';
+type TAligmentBasic = 'flex-start' | 'flex-end' | 'center';
 
-type FlexProps = {
+type TFlexProps = {
     direction?: 'row' | 'column';
     wrap?: 'wrap' | 'no-wrap' | 'wrap-revers';
-    alignItems?: AligmentBasicType | ('stretch' | 'baseline');
-    justifyContent?: AligmentBasicType | ('space-between' | 'space-around' | 'space-evenly');
+    alignItems?: TAligmentBasic | ('stretch' | 'baseline');
+    justifyContent?:
+        | TAligmentBasic
+        | ('space-between' | 'space-around' | 'space-evenly');
     gap?: number;
 };
 
-export type StackProps = PropsWithChildren<
+export type TStackProps = PropsWithChildren<
     {
         className?: string;
-    } & FlexProps
+    } & TFlexProps
 >;
